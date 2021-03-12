@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>fb-messenger</string>
+    </array>
 </dict>
 </plist>

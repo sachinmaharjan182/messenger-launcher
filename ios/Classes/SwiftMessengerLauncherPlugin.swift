@@ -9,6 +9,18 @@ public class SwiftMessengerLauncherPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    if (call.method == "launchMessenger") {
+        let params = call.arguments as! Dictionary<String,String>
+        let messengerId: String = params["messengerId"]!
+        let messengerUrl = "fb-messenger://user-thread/"+messengerId
+        if UIApplication.shared.canOpenURL(URL(string: messengerUrl)!) {
+            UIApplication.shared.openURL(URL(string: messengerUrl)!)
+        }else {
+            let url = "https://m.me/"+messengerId
+            UIApplication.shared.openURL(URL(string: url)!)
+        }
+
+    }
+
   }
 }
