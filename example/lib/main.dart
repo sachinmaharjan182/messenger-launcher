@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: GestureDetector(
           onTap: () {
-            MessengerLauncher.launchMessenger("sachinmaharjan182");
+            MessengerLauncher.launchMessenger("100004668092489");
           },
           child: Center(
             child: Text("Open Messenger"),
