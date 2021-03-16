@@ -23,7 +23,8 @@ class MessengerLauncherPlugin: FlutterPlugin, MethodCallHandler {
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
   private lateinit var context: Context
-  val MESSENGER_PACKAGE = "com.facebook.orca"
+  val MESSENGER = "com.facebook.orca"
+  val MESSENGER_LITE = "com.facebook.mlite"
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "messenger_launcher")
@@ -47,22 +48,31 @@ class MessengerLauncherPlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
+  private fun hasMessenger(): Boolean {
+    return  hasApp(MESSENGER_LITE) || hasApp(MESSENGER)
+  }
+
   @TargetApi(Build.VERSION_CODES.DONUT)
   fun openMessenger(messengerId: String) {
     val intent = Intent()
     intent.action = Intent.ACTION_VIEW
-    intent.setPackage(MESSENGER_PACKAGE)
+    if (hasApp(MESSENGER)) {
+      intent.setPackage(MESSENGER)
+      intent.data = Uri.parse("fb-messenger://user/$messengerId")
+    }else {
+      intent.data = Uri.parse("fb-messenger-lite://user/$messengerId")
+      intent.setPackage(MESSENGER_LITE)
+    }
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    intent.data = Uri.parse("https://m.me/$messengerId")
     context.startActivity(intent)
   }
 
-  private fun hasMessenger(): Boolean {
+  private fun hasApp(appPackage: String): Boolean {
     val pm: PackageManager = context.packageManager
     var appInstalled: Boolean
 
     try {
-      pm.getPackageInfo(MESSENGER_PACKAGE, PackageManager.GET_ACTIVITIES)
+      pm.getPackageInfo(appPackage, PackageManager.GET_ACTIVITIES)
       appInstalled = true
     } catch (e: PackageManager.NameNotFoundException) {
       appInstalled = false
